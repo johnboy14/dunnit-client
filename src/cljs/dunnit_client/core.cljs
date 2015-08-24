@@ -33,6 +33,12 @@
         (swap! dunnits #(conj @dunnits msg)))
       (recur)))
 
+(defn handle-message [_]
+  (println "Sending " (-> (.getElementById js/document "dunnit-input")
+                          .-value))
+  (chsk-send! [:fast-push/dunnit (-> (.getElementById js/document "dunnit-input")
+                                     .-value)]))
+
 ;; -------------------------
 ;; Views
 
@@ -45,7 +51,12 @@
      (for [item @dunnits]
        [:li (str "Email: " (:emailAddress (last item)))
         [:ul
-         [:li (str " Message: " (:message (last item)))]]])]]])
+         [:li (str " Message: " (:message (last item)))]]])]]
+   [:br]
+   [:div
+    [:label "Type Dunnit here!! "] [:input {:type "text" :id "dunnit-input"}]
+    [:input {:type "button" :value "Send"
+             :on-click handle-message}]]])
 
 (defn current-page []
   [:div [(session/get :current-page)]])

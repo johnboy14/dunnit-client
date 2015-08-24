@@ -9,7 +9,8 @@
             [taoensso.sente :as sente]
             [taoensso.sente.server-adapters.http-kit :refer (sente-web-server-adapter)]
             [taoensso.carmine :as car :refer (wcar)]
-            [cheshire.core :as ch]))
+            [cheshire.core :as ch]
+            [clojure.core.async :refer [go-loop <!!]]))
 
 
 (let [{:keys [ch-recv send-fn ajax-post-fn ajax-get-or-ws-handshake-fn
@@ -24,12 +25,22 @@
 
 (def redis-conn {:pool {} :spec {}})
 
+;; Listen for Events from Redis and broadcast them using websockets
 (car/with-new-pubsub-listener redis-conn
                               {"dunnit" (fn [[type match content :as msg]]
                                           (prn "Channel match: " content)
                                           (doseq [uid (:any @connected-uids)]
                                             (chsk-send! uid [:fast-push/dunnit (ch/parse-string content true)])))}
                               (car/subscribe "dunnit"))
+
+;;Listen for dunnit event from websocket and publish to Redis
+(go-loop []
+  (let [[event msg] (:event (<!! ch-chsk))]
+    (if (and (= event :fast-push/dunnit) (not (nil? msg)))
+      (do (println "Message Received " msg)
+          (wcar redis-conn (car/publish "dunnit" (ch/generate-string {:emailAddress "john@dummy.com" :historyId "123434324" :message msg})))
+          (recur))
+      (recur))))
 
 (def home-page
   (html
