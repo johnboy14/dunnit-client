@@ -38,10 +38,12 @@
 
 (defn dunnit-dashboard []
   [:div [:h2 "Dunnit Dashboard"]
-   [:div [:h4 "Dunnits Live Feed.  Sorry but we ain't go no persistence"]
+   [:div [:h4 "Dunnits Live Feed.  Sorry but we ain't got no persistence"]
     [:ul
      (for [item @dunnits]
-       [:li (str "Email: " (:emailAddress (last item)) " HistoryId: " (:historyId (last item)))])]]])
+       [:li (str "Email: " (:emailAddress (last item)))
+        [:ul
+         [:li (str " Message: " (:message (last item)))]]])]]])
 
 (defn current-page []
   [:div [(session/get :current-page)]])
