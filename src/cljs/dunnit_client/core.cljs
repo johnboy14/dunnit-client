@@ -36,18 +36,9 @@
 ;; -------------------------
 ;; Views
 
-(defn home-page []
-  [:div [:h2 "Welcome to dunnit-client"]
-   [:div [:a {:href "#/about"} "go to about page"]]
-   [:div [:a {:href "#/dunnit"} "go to dunnit dashboard"]]])
-
-(defn about-page []
-  [:div [:h2 "About dunnit-client"]
-   [:div [:a {:href "#/"} "go to the home page"]]])
-
 (defn dunnit-dashboard []
   [:div [:h2 "Dunnit Dashboard"]
-   [:div [:h4 "Dunnits"]
+   [:div [:h4 "Dunnits Live Feed.  Sorry but we ain't go no persistence"]
     [:ul
      (for [item @dunnits]
        [:li (str "Email: " (:emailAddress (last item)) " HistoryId: " (:historyId (last item)))])]]])
@@ -60,13 +51,7 @@
 (secretary/set-config! :prefix "#")
 
 (secretary/defroute "/" []
-  (session/put! :current-page #'home-page))
-
-(secretary/defroute "/about" []
-  (session/put! :current-page #'about-page))
-
-(secretary/defroute "/dunnit" []
-                    (session/put! :current-page #'dunnit-dashboard))
+  (session/put! :current-page #'dunnit-dashboard))
 
 ;; -------------------------
 ;; History
