@@ -38,7 +38,9 @@
 
 (defn dunnit-dashboard []
   [:div [:h2 "Dunnit Dashboard"]
-   [:div [:h4 "Dunnits Live Feed.  Sorry but we ain't got no persistence"]
+   [:div [:h4 "Dunnits Live Feed."]
+    [:p {:style {:color "red"}} "I'm deeply sorry your dunnits will disappear if you refresh."]
+    [:br]
     [:ul
      (for [item @dunnits]
        [:li (str "Email: " (:emailAddress (last item)))
