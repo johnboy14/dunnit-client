@@ -23,7 +23,7 @@
 
 (enable-console-print!)
 
-(def dunnits (atom []))
+(def dunnits (atom '()))
 
 (go-loop []
   (print "Loop Started")
@@ -47,16 +47,17 @@
    [:div [:h4 "Dunnits Live Feed."]
     [:p {:style {:color "red"}} "I'm deeply sorry your dunnits will disappear if you refresh."]
     [:br]
+    [:div
+     [:label "Type Dunnit here!! "] [:input {:type "text" :id "dunnit-input"}]
+     [:input {:type "button" :value "Send"
+              :on-click handle-message}]]
+    [:br]
     [:ul
      (for [item @dunnits]
        [:li (str "Email: " (:emailAddress (last item)))
         [:ul
          [:li (str " Message: " (:message (last item)))]]])]]
-   [:br]
-   [:div
-    [:label "Type Dunnit here!! "] [:input {:type "text" :id "dunnit-input"}]
-    [:input {:type "button" :value "Send"
-             :on-click handle-message}]]])
+   [:br]])
 
 (defn current-page []
   [:div [(session/get :current-page)]])
